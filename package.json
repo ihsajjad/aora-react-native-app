@@ -1,5 +1,7 @@
 {
   "name": "aora",
+  "slug": "aora",
+  "scheme": "aora",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
