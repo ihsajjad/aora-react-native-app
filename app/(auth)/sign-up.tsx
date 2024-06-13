@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 const SignUp = () => {
   return (
     <View>
-      <Text>SignUp</Text>
+      <Text className="mt-20">SignUp</Text>
     </View>
   );
 };

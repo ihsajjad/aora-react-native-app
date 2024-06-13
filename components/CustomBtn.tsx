@@ -6,7 +6,7 @@ interface BtnProps {
   handlePress: () => void;
   containerStyles: string;
   isLoading: boolean;
-  textStyles: string;
+  textStyles?: string;
 }
 
 const CustomBtn = ({
