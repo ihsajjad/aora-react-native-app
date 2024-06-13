@@ -65,7 +65,7 @@ const SignIn = () => {
             <Text className="text-lg text-gray-100 font-pregular">
               Don't have account?{" "}
               <Link
-                href={"/sign-u"}
+                href={"/sign-up"}
                 className="text-lg font-psemibold text-secondary"
               >
                 Sign Up
