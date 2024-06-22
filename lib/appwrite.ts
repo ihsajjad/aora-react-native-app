@@ -8,9 +8,28 @@ export const appwriteConfig = {
   storageId: "666ae371003d613e368c",
 };
 
+const {
+  endpoint,
+  platform,
+  projectId,
+  databaseId,
+  userCollectionId,
+  videoCollectionId,
+  storageId,
+} = appwriteConfig;
+
 import { SignInProps } from "@/app/(auth)/sign-in";
 import { SignUpProps } from "@/app/(auth)/sign-up";
-import { Account, Avatars, Client, Databases, ID } from "react-native-appwrite";
+import { PostType } from "@/app/(tabs)/home";
+import { CurrentUserType } from "@/context/GlobalProvider";
+import {
+  Account,
+  Avatars,
+  Client,
+  Databases,
+  ID,
+  Query,
+} from "react-native-appwrite";
 // Init your React Native SDK
 const client = new Client();
 
@@ -27,7 +46,7 @@ export const createUser = async ({
   username,
   email,
   password,
-}: SignUpProps) => {
+}: SignUpProps): Promise<any> => {
   try {
     const userId = ID.unique();
 
@@ -65,3 +84,50 @@ export async function signIn({ email, password }: SignInProps) {
     throw new Error(error as string);
   }
 }
+
+export const getCurrentUser = async (): Promise<
+  CurrentUserType | undefined
+> => {
+  try {
+    const currentAccount = await account.get();
+    if (!currentAccount) throw Error;
+
+    const data = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("accountId", currentAccount.$id)]
+    );
+
+    if (!currentAccount) throw Error;
+
+    const document = data.documents[0];
+
+    if (!document.email || !document.username || !document.avatar) {
+      throw new Error("User document is missing required fields");
+    }
+
+    const currentUser: CurrentUserType = {
+      username: document.username,
+      email: document.email,
+      avatar: document.avatar,
+    };
+
+    return currentUser;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllPosts = async (): Promise<PostType[]> => {
+  try {
+    const posts = await databases.listDocuments(databaseId, videoCollectionId);
+    return posts.documents.map((doc) => ({
+      title: doc.title,
+      thumbnail: doc.thumbnail,
+      video: doc.video,
+      prompt: doc.prompt,
+    })) as PostType[];
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};

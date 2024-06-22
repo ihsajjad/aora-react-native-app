@@ -1,9 +1,10 @@
 import CustomBtn from "@/components/CustomBtn";
 import FormField from "@/components/FormField";
 import { images } from "@/constants";
+import { GlobalContext } from "@/context/GlobalProvider";
 import { createUser } from "@/lib/appwrite";
 import { Link, router } from "expo-router";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Alert, Image, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -19,7 +20,9 @@ const SignUp = () => {
     email: "",
     password: "",
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { setUser, setIsLoggedIn } = useContext(GlobalContext) || {};
 
   const submit = async () => {
     if (!form.email || !form.username || !form.password) {
@@ -30,6 +33,8 @@ const SignUp = () => {
 
     try {
       const result = await createUser(form);
+      setUser(result);
+      setIsLoggedIn(true);
 
       router.replace("/home");
     } catch (error) {
