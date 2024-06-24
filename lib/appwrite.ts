@@ -122,10 +122,50 @@ export const getAllPosts = async (): Promise<PostType[]> => {
   try {
     const posts = await databases.listDocuments(databaseId, videoCollectionId);
     return posts.documents.map((doc) => ({
+      $id: doc.$id,
       title: doc.title,
       thumbnail: doc.thumbnail,
       video: doc.video,
       prompt: doc.prompt,
+      creator: doc.creator,
+    })) as PostType[];
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};
+
+export const getLatestPosts = async (): Promise<PostType[]> => {
+  try {
+    const posts = await databases.listDocuments(databaseId, videoCollectionId, [
+      Query.orderDesc("$createdAt"),
+      Query.limit(7),
+    ]);
+    return posts.documents.map((doc) => ({
+      $id: doc.$id,
+      title: doc.title,
+      thumbnail: doc.thumbnail,
+      video: doc.video,
+      prompt: doc.prompt,
+      creator: doc.creator,
+    })) as PostType[];
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};
+
+export const searchPosts = async (query?: string): Promise<PostType[]> => {
+  try {
+    const posts = await databases.listDocuments(databaseId, videoCollectionId, [
+      Query.search("title", query || ""),
+    ]);
+
+    return posts.documents.map((doc) => ({
+      $id: doc.$id,
+      title: doc.title,
+      thumbnail: doc.thumbnail,
+      video: doc.video,
+      prompt: doc.prompt,
+      creator: doc.creator,
     })) as PostType[];
   } catch (error) {
     throw new Error(error as string);
