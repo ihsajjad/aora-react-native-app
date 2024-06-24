@@ -34,9 +34,9 @@ import {
 const client = new Client();
 
 client
-  .setEndpoint(appwriteConfig.endpoint) // Your Appwrite Endpoint
-  .setProject(appwriteConfig.projectId) // Your project ID
-  .setPlatform(appwriteConfig.platform); // Your application ID or bundle ID.
+  .setEndpoint(endpoint) // Your Appwrite Endpoint
+  .setProject(projectId) // Your project ID
+  .setPlatform(platform); // Your application ID or bundle ID.
 
 const account = new Account(client);
 const avatars = new Avatars(client);
@@ -107,6 +107,7 @@ export const getCurrentUser = async (): Promise<
     }
 
     const currentUser: CurrentUserType = {
+      $id: document.$id,
       username: document.username,
       email: document.email,
       avatar: document.avatar,
@@ -168,6 +169,35 @@ export const searchPosts = async (query?: string): Promise<PostType[]> => {
       creator: doc.creator,
     })) as PostType[];
   } catch (error) {
+    throw new Error(error as string);
+  }
+};
+
+export const getUserPosts = async (userId?: string): Promise<PostType[]> => {
+  try {
+    const posts = await databases.listDocuments(databaseId, videoCollectionId, [
+      Query.equal("creator", userId || ""),
+    ]);
+
+    return posts.documents.map((doc) => ({
+      $id: doc.$id,
+      title: doc.title,
+      thumbnail: doc.thumbnail,
+      video: doc.video,
+      prompt: doc.prompt,
+      creator: doc.creator,
+    })) as PostType[];
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};
+
+export const signOut = async () => {
+  try {
+    const session = await account.deleteSession("current");
+    return session;
+  } catch (error) {
+    console.log(error);
     throw new Error(error as string);
   }
 };

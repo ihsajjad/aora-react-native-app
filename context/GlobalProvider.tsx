@@ -9,6 +9,7 @@ import {
 } from "react";
 
 export interface CurrentUserType {
+  $id: string;
   email: string;
   username: string;
   avatar: string;

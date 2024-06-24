@@ -3,9 +3,10 @@ import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
 import VideoCard from "@/components/VideoCard";
 import { images } from "@/constants";
+import { CurrentUserType, GlobalContext } from "@/context/GlobalProvider";
+import useAppwrite from "@/hooks/useAppwrite";
 import { getAllPosts, getLatestPosts } from "@/lib/appwrite";
-import useAppwrite from "@/lib/useAppwrite";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,12 +16,12 @@ export interface PostType {
   video: string;
   prompt: string;
   $id: string;
-  creator: { avatar: string; username: string };
+  creator: CurrentUserType;
 }
 
 const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
-
+  const { user } = useContext(GlobalContext);
   const { data: posts, isLoading, refetch } = useAppwrite(getAllPosts);
   const { data: latestPosts } = useAppwrite(getLatestPosts);
 
@@ -45,7 +46,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  IH Sajjad
+                  {user?.username}
                 </Text>
               </View>
 

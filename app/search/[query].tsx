@@ -1,24 +1,14 @@
 import EmptyState from "@/components/EmptyState";
 import SearchInput from "@/components/SearchInput";
 import VideoCard from "@/components/VideoCard";
+import useAppwrite from "@/hooks/useAppwrite";
 import { searchPosts } from "@/lib/appwrite";
-import useAppwrite from "@/lib/useAppwrite";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export interface PostType {
-  title: string;
-  thumbnail: string;
-  video: string;
-  prompt: string;
-  $id: string;
-  creator: { avatar: string; username: string };
-}
-
 const Search = () => {
-  const [refreshing, setRefreshing] = useState(false);
   const { query } = useLocalSearchParams();
 
   const {
